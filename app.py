@@ -42,9 +42,9 @@ def find_string_across_all_rows_n_column():
 
 
 def filter_data(fetched_data):
-    d = dict()
     branches = []
     for i in fetched_data:
+        d = dict()
         d["ifsc"] = i[0]
         d["bank_id"] = i[1]
         d["branch"] = i[2]
