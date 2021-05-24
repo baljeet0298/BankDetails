@@ -1,9 +1,18 @@
 import psycopg2
 import flask
+import os
 from flask import request, jsonify
 
-conn = psycopg2.connect(database="bsegf5gzh3uvewm75smv", user="upn7zorz7rny5qlmw8di", password="Kn463TU1YtWLbIstwXGS",
-                        host="bsegf5gzh3uvewm75smv-postgresql.services.clever-cloud.com", port="5432")
+db = os.environ.get('db')
+host = os.environ.get('host')
+username = os.environ.get('username')
+password = os.environ.get('password')
+port = os.environ.get('port')
+limit = 3
+offset = 0
+
+conn = psycopg2.connect(database=db, user=username, password=password,
+                        host=host, port=port)
 cur = conn.cursor()
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -12,13 +21,9 @@ app.config["DEBUG"] = True
 @app.route('/api/branches/autocomplete', methods=['POST', 'GET'])
 def branch_details():
     branch = request.args.get('q')
-    if request.args.get('limit') is None:
-        limit = 3
-    else:
+    if request.args.get('limit') is not None:
         limit = request.args.get('limit')
-    if request.args.get('offset') is None:
-        offset = 0
-    else:
+    if request.args.get('offset') is not None:
         offset = request.args.get('offset')
     fetched_data = get_bank_details(branch, limit, offset)
     resp = jsonify(branches=filter_data(fetched_data))
@@ -28,13 +33,9 @@ def branch_details():
 @app.route('/api/branches', methods=['POST', 'GET'])
 def find_string_across_all_rows_n_column():
     string_to_search = request.args.get('q')
-    if request.args.get('limit') is None:
-        limit = 3
-    else:
+    if request.args.get('limit') is not None:
         limit = request.args.get('limit')
-    if request.args.get('offset') is None:
-        offset = 0
-    else:
+    if request.args.get('offset') is not None:
         offset = request.args.get('offset')
     fetched_data = get_bank_details_across_table(string_to_search, limit, offset)
     resp = jsonify(branches=filter_data(fetched_data))
